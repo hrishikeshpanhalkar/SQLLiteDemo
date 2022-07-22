@@ -18,11 +18,13 @@ import com.example.squlitedemo.database.DBHelper;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class LoginActivity extends AppCompatActivity {
+    
     public static final String MyPREFERENCES = "MyPrefs" ;
     private Button btnLogin, btnRegister;
     private TextInputLayout username, password;
     private DBHelper dbHelper;
     private SharedPreferences sharedpreferences;
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +40,12 @@ public class LoginActivity extends AppCompatActivity {
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         boolean isLoggedIn = sharedpreferences.getBoolean("isLoggedIn", false);
         if(isLoggedIn){
-            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            Intent intent = null;
+            if(sharedpreferences.getString("role", "").equals("Admin")){
+                intent = new Intent(LoginActivity.this, AdminHomeActivity.class);
+            }else {
+                intent = new Intent(LoginActivity.this, HomeActivity.class);
+            }
             Bundle bundle = new Bundle();
             bundle.putString("username", sharedpreferences.getString("username", ""));
             intent.putExtras(bundle);
@@ -71,13 +78,19 @@ public class LoginActivity extends AppCompatActivity {
                     }else {
                         while (res.moveToNext()){
                             if(usernameValue.equals(res.getString(0)) && passValue.equals(res.getString(1))){
-                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                Intent intent = null;
+                                if(res.getString(4).equals("Admin")){
+                                    intent = new Intent(LoginActivity.this, AdminHomeActivity.class);
+                                }else {
+                                    intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                }
                                 Bundle bundle = new Bundle();
                                 bundle.putString("username", usernameValue);
                                 intent.putExtras(bundle);
                                 SharedPreferences.Editor editor = sharedpreferences.edit();
                                 editor.putBoolean("isLoggedIn", true);
                                 editor.putString("username", usernameValue);
+                                editor.putString("role", res.getString(4));
                                 editor.apply();
                                 Toast.makeText(LoginActivity.this, "Login Successfully!!", Toast.LENGTH_SHORT).show();
                                 isLoginSuccessful = true;
