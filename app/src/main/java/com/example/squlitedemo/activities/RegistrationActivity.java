@@ -30,7 +30,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private AutoCompleteTextView role;
     private DBHelper dbHelper;
     private SharedPreferences sharedpreferences;
-    String[] roles ={"Admin","User"};
+    String[] roles ={"User"};
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -76,12 +76,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 }else{
                     boolean checkInsertData = dbHelper.insertUserData(usernameValue, passValue, emailValue, phoneValue, roleValue);
                     if(checkInsertData){
-                        Intent intent = null;
-                        if(roleValue.equals("Admin")){
-                            intent = new Intent(RegistrationActivity.this, AdminHomeActivity.class);
-                        }else {
-                            intent = new Intent(RegistrationActivity.this, HomeActivity.class);
-                        }
+                        Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putString("username", usernameValue);
                         intent.putExtras(bundle);

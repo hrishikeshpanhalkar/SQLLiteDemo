@@ -18,8 +18,8 @@ import com.example.squlitedemo.database.DBHelper;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class LoginActivity extends AppCompatActivity {
-    
-    public static final String MyPREFERENCES = "MyPrefs" ;
+
+    public static final String MyPREFERENCES = "MyPrefs";
     private Button btnLogin, btnRegister;
     private TextInputLayout username, password;
     private DBHelper dbHelper;
@@ -39,11 +39,11 @@ public class LoginActivity extends AppCompatActivity {
         dbHelper = new DBHelper(LoginActivity.this);
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         boolean isLoggedIn = sharedpreferences.getBoolean("isLoggedIn", false);
-        if(isLoggedIn){
+        if (isLoggedIn) {
             Intent intent = null;
-            if(sharedpreferences.getString("role", "").equals("Admin")){
+            if (sharedpreferences.getString("role", "").equals("Admin")) {
                 intent = new Intent(LoginActivity.this, AdminHomeActivity.class);
-            }else {
+            } else {
                 intent = new Intent(LoginActivity.this, HomeActivity.class);
             }
             Bundle bundle = new Bundle();
@@ -64,26 +64,38 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean isLoginSuccessful = false;
                 String usernameValue = username.getEditText().getText().toString();
                 String passValue = password.getEditText().getText().toString();
-                if(usernameValue.isEmpty()){
+                if (usernameValue.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Fill All Details!!", Toast.LENGTH_SHORT).show();
-                }else if(passValue.isEmpty()){
+                } else if (passValue.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Fill All Details", Toast.LENGTH_SHORT).show();
-                }else {
-                    Cursor res = dbHelper.getUserData();
-                    if(res.getCount() == 0){
-                        Toast.makeText(LoginActivity.this, "Unable to Login", Toast.LENGTH_SHORT).show();
+                } else if (usernameValue.equals("admin")) {
+                    if(passValue.equals("abc123")){
+                        Intent intent = new Intent(LoginActivity.this, AdminHomeActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("username", usernameValue);
+                        intent.putExtras(bundle);
+                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                        editor.putBoolean("isLoggedIn", true);
+                        editor.putString("username", usernameValue);
+                        editor.putString("role", "Admin");
+                        editor.apply();
+                        Toast.makeText(LoginActivity.this, "Login Successfully!!", Toast.LENGTH_SHORT).show();
+                        startActivity(intent);
+                        finish();
                     }else {
-                        while (res.moveToNext()){
-                            if(usernameValue.equals(res.getString(0)) && passValue.equals(res.getString(1))){
-                                Intent intent = null;
-                                if(res.getString(4).equals("Admin")){
-                                    intent = new Intent(LoginActivity.this, AdminHomeActivity.class);
-                                }else {
-                                    intent = new Intent(LoginActivity.this, HomeActivity.class);
-                                }
+                        Toast.makeText(LoginActivity.this, "unable to login", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Cursor res = dbHelper.getUserData();
+                    if (res.getCount() == 0) {
+                        Toast.makeText(LoginActivity.this, "Unable to Login", Toast.LENGTH_SHORT).show();
+                    } else {
+                        boolean isLoginSuccessful = false;
+                        while (res.moveToNext()) {
+                            if (usernameValue.equals(res.getString(0)) && passValue.equals(res.getString(1))) {
+                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                 Bundle bundle = new Bundle();
                                 bundle.putString("username", usernameValue);
                                 intent.putExtras(bundle);
@@ -99,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                                 break;
                             }
                         }
-                        if(!isLoginSuccessful){
+                        if (!isLoginSuccessful) {
                             Toast.makeText(LoginActivity.this, "Unable to Login", Toast.LENGTH_SHORT).show();
                         }
                     }

@@ -52,16 +52,13 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     @SuppressLint("Recycle")
-    public boolean updateUserData(String username, String password, String email, String phone, String role){
+    public boolean updatePostData(int postNo, String post){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("password", password);
-        contentValues.put("email", email);
-        contentValues.put("phone", phone);
-        contentValues.put("role", role);
-        Cursor cursor = db.rawQuery("Select * from UserDetails where username == ?", new String[]{username});
+        contentValues.put("post", post);
+        Cursor cursor = db.rawQuery("Select * from PostDetails where postNo == ?", new String[]{String.valueOf(postNo)});
         if(cursor.getCount() > 0){
-            long result = db.update("UserDetails", contentValues, "name=?", new String[]{username});
+            long result = db.update("PostDetails", contentValues, "postNo=?", new String[]{String.valueOf(postNo)});
             return result != -1;
         }else {
             return false;
@@ -108,5 +105,25 @@ public class DBHelper extends SQLiteOpenHelper {
     public Cursor getUnapprovedPosts(){
         SQLiteDatabase db = this.getWritableDatabase();
         return db.rawQuery("Select * from PostDetails where approvedStatus == false", null);
+    }
+
+    @SuppressLint("Recycle")
+    public boolean approvePost(int postNo){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("approvedStatus", true);
+        Cursor cursor = db.rawQuery("Select * from PostDetails where postNo == ?", new String[]{String.valueOf(postNo)});
+        if(cursor.getCount() > 0){
+            long result = db.update("PostDetails", contentValues, "postNo=?", new String[]{String.valueOf(postNo)});
+            return result != -1;
+        }else {
+            return false;
+        }
+    }
+
+    @SuppressLint("Recycle")
+    public Cursor getOtherPostsData(String username){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.rawQuery("Select * from PostDetails where username != ? and approvedStatus == true",new String[]{username}, null);
     }
 }

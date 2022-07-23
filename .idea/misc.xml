@@ -12,6 +12,9 @@
         <entry key="app/src/main/res/layout/activity_others_post_view.xml" value="0.18177083333333333" />
         <entry key="app/src/main/res/layout/activity_registration.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/admin_posts_item.xml" value="0.35520833333333335" />
+        <entry key="app/src/main/res/layout/mypostitemalyout.xml" value="0.18072916666666666" />
+        <entry key="app/src/main/res/layout/otherpostitemalyout.xml" value="0.4148418491484185" />
+        <entry key="app/src/main/res/layout/update_dialog.xml" value="0.18072916666666666" />
       </map>
     </option>
   </component>
